@@ -13,14 +13,39 @@ export function ProjectsBlock({ items, path, editing, filter, showFilter, usedSk
   const activeFilter = editing ? '' : filter; 
   const visibleCount = items.filter((t) => !activeFilter || t.skills.includes(activeFilter)).length;
 
+  const handleCardClick = (e: React.MouseEvent<HTMLElement>, item: SectionItem) => {
+    if (editing) return;
+    // Ensure clicks on links, buttons, or inputs don't trigger the modal
+    if ((e.target as HTMLElement).closest('a, button, input, select, textarea, [contenteditable="true"]')) return;
+    
+    const rect = e.currentTarget.getBoundingClientRect();
+    setModalState({ item, rect });
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLElement>, item: SectionItem) => {
+    if (editing) return;
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      if ((e.target as HTMLElement).closest('a, button, input, select, textarea, [contenteditable="true"]')) return;
+      const rect = e.currentTarget.getBoundingClientRect();
+      setModalState({ item, rect });
+    }
+  };
+
   return (
     <>
-      {showFilter && !editing && (
-        <div className="fbar" role="group" aria-label="Filter projects">
-          <button type="button" aria-pressed={!activeFilter} onClick={() => onFilter('')}>All</button>
-          {usedSkills.map((k) => <button key={k} type="button" aria-pressed={activeFilter === k} onClick={() => onFilter(k)}>{k}</button>)}
-        </div>
-      )}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+        {showFilter && !editing ? (
+          <div className="fbar" role="group" aria-label="Filter projects" style={{ margin: 0 }}>
+            <button type="button" aria-pressed={!activeFilter} onClick={() => onFilter('')}>All</button>
+            {usedSkills.map((k) => <button key={k} type="button" aria-pressed={activeFilter === k} onClick={() => onFilter(k)}>{k}</button>)}
+          </div>
+        ) : <div />}
+        {!editing && (
+          <span className="hint" style={{ margin: 0, fontSize: 12 }}>Select a card to view full details.</span>
+        )}
+      </div>
+
       <div className="pwrap">
         <div className="pgrid">
           {items.map((t, j) => {
@@ -32,29 +57,13 @@ export function ProjectsBlock({ items, path, editing, filter, showFilter, usedSk
             const primaryLink = normalizeExternalUrl(t.repoUrl || t.demoUrl || t.externalUrl);
             const linkLabel = t.externalUrl ? 'View Work →' : 'View Project →';
 
-            const handleCardClick = (e: React.MouseEvent<HTMLElement>) => {
-              if (editing) return;
-              // Capture the exact bounding box for the FLIP animation
-              const rect = e.currentTarget.getBoundingClientRect();
-              setModalState({ item: t, rect });
-            };
-
-            const handleKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
-              if (editing) return;
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                const rect = e.currentTarget.getBoundingClientRect();
-                setModalState({ item: t, rect });
-              }
-            };
-
             return (
               <article 
                 key={j} 
                 className="pc" 
                 hidden={!visible}
-                onClick={handleCardClick}
-                onKeyDown={handleKeyDown}
+                onClick={(e) => handleCardClick(e, t)}
+                onKeyDown={(e) => handleKeyDown(e, t)}
                 tabIndex={editing ? -1 : 0}
                 role={editing ? undefined : 'button'}
               >
@@ -73,7 +82,6 @@ export function ProjectsBlock({ items, path, editing, filter, showFilter, usedSk
                       target="_blank" 
                       rel="noopener noreferrer" 
                       className="pc-link"
-                      onClick={(e) => e.stopPropagation()} // Prevent modal from opening
                     >
                       {linkLabel}
                     </a>
