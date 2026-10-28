@@ -10,12 +10,14 @@ function pickImage(onPick: (file: File) => void) { const input = document.create
 
 export function ProjectsBlock({ items, path, editing, filter, showFilter, usedSkills, onFilter, onSkillClick, onText, onSkillsChange, onAdd, onRemove, onUploadImage }: { items: SectionItem[]; path: string; editing: boolean; filter: string; showFilter: boolean; usedSkills: string[]; onFilter: (v: string) => void; onSkillClick: (n: string) => void; onText: (p: string, v: string) => void; onSkillsChange: (p: string, s: string[]) => void; onAdd: () => void; onRemove: (p: string) => void; onUploadImage: (p: string, f: File) => void; }) {
   const [modalState, setModalState] = useState<{ item: SectionItem, rect: DOMRect } | null>(null);
-  const activeFilter = editing ? '' : filter; 
+  
+  // Only apply the filter if this is the Projects section (showFilter is true)
+  const activeFilter = (editing || !showFilter) ? '' : filter; 
+  
   const visibleCount = items.filter((t) => !activeFilter || t.skills.includes(activeFilter)).length;
 
   const handleCardClick = (e: React.MouseEvent<HTMLElement>, item: SectionItem) => {
     if (editing) return;
-    // Ensure clicks on links, buttons, or inputs don't trigger the modal
     if ((e.target as HTMLElement).closest('a, button, input, select, textarea, [contenteditable="true"]')) return;
     
     const rect = e.currentTarget.getBoundingClientRect();
@@ -42,7 +44,9 @@ export function ProjectsBlock({ items, path, editing, filter, showFilter, usedSk
           </div>
         )}
         {!editing && (
-          <span className="hint" style={{ display: 'block', fontSize: 12 }}>click on a project to expand</span>
+          <span className="hint" style={{ display: 'block', fontSize: 12 }}>
+            {showFilter ? 'click on a project to expand' : 'click on a card to expand'}
+          </span>
         )}
       </div>
 
