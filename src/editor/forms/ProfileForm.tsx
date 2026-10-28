@@ -34,8 +34,6 @@ export function ProfileForm() {
     }
   };
 
-  console.log("ProfileForm rendered successfully with ProfilePhotoEditor");
-
   return (
     <form className="form" onSubmit={(e) => e.preventDefault()}>
       <h2>Personal Details</h2>
@@ -47,7 +45,6 @@ export function ProfileForm() {
       </div>
 
       <h3 style={{ marginTop: 24 }}>Profile Photo</h3>
-      {/* THIS IS THE CROPPING COMPONENT */}
       <ProfilePhotoEditor />
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 32 }}>
@@ -61,7 +58,7 @@ export function ProfileForm() {
         {p.socialLinks.map((link, i) => {
           const isValid = !link.url || normalizeExternalUrl(link.url) !== null;
           return (
-            <div className="row-card" key={link.id} style={{ gridTemplateColumns: '40px 1fr auto' }}>
+            <div className="row-card" key={link.id}>
               <div className="row-handle">
                 <button type="button" onClick={() => {
                   const next = [...p.socialLinks];

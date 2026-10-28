@@ -64,7 +64,7 @@ export function ContactForm() {
 
       <div className="rows">
         {contacts.map((c, i) => (
-          <div className="row-card" key={c.id} style={{ gridTemplateColumns: '40px 1fr auto' }}>
+          <div className="row-card" key={c.id}>
             <div className="row-handle">
               <button type="button" onClick={() => move(c.id, -1)} disabled={i === 0}>↑</button>
               <button type="button" onClick={() => move(c.id, 1)} disabled={i === contacts.length - 1}>↓</button>

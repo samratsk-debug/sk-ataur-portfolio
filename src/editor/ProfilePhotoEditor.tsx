@@ -26,14 +26,13 @@ export function ProfilePhotoEditor() {
       return;
     }
     
-    console.log("NEW ProfilePhotoEditor triggered. File selected:", file.name);
     const url = URL.createObjectURL(file);
-    setImageToCrop(url); // This triggers the crop modal
+    setImageToCrop(url);
   };
 
   const handleCropComplete = async (blob: Blob) => {
     setBusy(true);
-    setImageToCrop(null); // Close cropper
+    setImageToCrop(null);
     try {
       const file = new File([blob], 'profile.jpg', { type: 'image/jpeg' });
       const asset = await uploadAsset(file, 'draft');
@@ -65,7 +64,7 @@ export function ProfilePhotoEditor() {
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 24, flexWrap: 'wrap' }}>
         
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
-          <div style={{ width: 120, height: 120, borderRadius: '50%', overflow: 'hidden', border: '3px solid #fff', background: 'rgba(255,255,255,0.1)' }}>
+          <div style={{ width: 140, height: 140, borderRadius: '50%', overflow: 'hidden', border: '3px solid #fff', background: 'rgba(255,255,255,0.1)' }}>
             {profile.photo?.url ? (
               <img src={profile.photo.url} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             ) : (
@@ -108,7 +107,6 @@ export function ProfilePhotoEditor() {
         </div>
       </div>
 
-      {/* Crop Modal */}
       {imageToCrop && (
         <ImageCropper 
           image={imageToCrop} 
@@ -117,7 +115,6 @@ export function ProfilePhotoEditor() {
         />
       )}
 
-      {/* Resume Preview Modal */}
       {showResumePreview && (
         <div className="modal-backdrop" style={{ zIndex: 9999 }} onClick={(e) => { if (e.target === e.currentTarget) setShowResumePreview(false); }}>
           <div className="modal-content glass-panel" style={{ width: 'min(800px, 100%)', padding: 32 }}>
@@ -135,7 +132,7 @@ export function ProfilePhotoEditor() {
                   <div className="kick">CURRICULUM VITAE</div>
                   <h1 className="name">{profile.name}</h1>
                   <p className="role">{profile.role}</p>
-                  <p className="ct">{[profile.email, profile.phone, profile.location].filter(Boolean).join(' · ')}</p>
+                  <p className="ct">{profile.contacts?.map(c => c.value).slice(0, 3).filter(Boolean).join(' · ')}</p>
                   
                   {profile.socialLinks && profile.socialLinks.length > 0 && (
                     <div className="social-links">
