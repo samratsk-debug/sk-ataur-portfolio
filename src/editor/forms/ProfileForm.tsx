@@ -38,13 +38,14 @@ export function ProfileForm() {
     <form className="form" onSubmit={(e) => e.preventDefault()}>
       <h2>Personal Details</h2>
       
-      <div className="row-card" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {/* Removed the .row-card wrapper to allow full-width inputs */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16, width: '100%', maxWidth: 600 }}>
         <label>Name<input value={p.name} onChange={(e) => set('name', e.target.value)} /></label>
         <label>Professional title<input value={p.role} onChange={(e) => set('role', e.target.value)} /></label>
         <label>About<textarea rows={6} value={p.about} onChange={(e) => set('about', e.target.value)} /></label>
       </div>
 
-      <h3 style={{ marginTop: 24 }}>Profile Photo</h3>
+      <h3 style={{ marginTop: 32 }}>Profile Photo</h3>
       <ProfilePhotoEditor />
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 32 }}>
@@ -110,7 +111,7 @@ export function ProfileForm() {
         <div style={{ background: 'rgba(255,255,255,.05)', padding: 16, borderRadius: 8, border: '1px solid rgba(255,255,255,.1)' }}>
           <p style={{ margin: '0 0 8px' }}><strong>{draft.resume.filename}</strong></p>
           <p className="muted" style={{ margin: '0 0 12px' }}>Size: {(draft.resume.size / 1024 / 1024).toFixed(2)} MB · Updated: {new Date(draft.resume.updatedAt).toLocaleDateString()}</p>
-          <div style={{ display: 'flex', gap: 8 }}>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             <a href={draft.resume.url} target="_blank" rel="noopener noreferrer" className="primary" style={{ padding: '8px 16px', textDecoration: 'none', borderRadius: 6, fontSize: 13, display: 'inline-block' }}>View Current</a>
             <label className="button" style={{ cursor: 'pointer', padding: '8px 16px', borderRadius: 6, border: '1px solid rgba(255,255,255,.2)', fontSize: 13, background: 'transparent', color: '#fff' }}>
               Replace PDF

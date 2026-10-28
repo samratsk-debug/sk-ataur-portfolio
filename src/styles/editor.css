@@ -35,6 +35,10 @@
 .form h4 { margin: 8px 0 4px; font: 600 13px Sora; color: #C8D1E8; }
 .form label { display: flex; flex-direction: column; gap: 4px; font: 500 13px Inter; color: #C8D1E8; }
 .form input, .form textarea, .form select {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
   padding: 9px 12px; border-radius: 8px;
   border: 1px solid rgba(255,255,255,.15); background: rgba(255,255,255,.05);
   color: #E8ECF6; font: 400 14px Inter;
@@ -74,12 +78,12 @@
 .custom-select:focus { outline: 2px solid #7C9CFF; outline-offset: 1px; }
 .custom-select option { background-color: #141A33; color: #E8ECF6; padding: 12px; font-size: 14px; }
 
-/* === ROW CARD (Shared across Forms) === */
+/* === DESKTOP ROW CARD LAYOUT === */
 .row-card {
   display: grid;
   grid-template-columns: 40px minmax(0, 1fr) auto;
   align-items: start;
-  gap: 12px;
+  gap: 16px;
   padding: 16px;
   border-radius: 12px;
   background: rgba(255,255,255,.04);
@@ -113,14 +117,6 @@
   gap: 10px;
   min-width: 0;
   width: 100%;
-}
-.row-fields input,
-.row-fields select,
-.row-fields textarea {
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
 }
 
 .row-card > .danger {
@@ -212,7 +208,7 @@
 .signin .error { color: #FF9B9B; font-size: 13px; margin: 0; }
 .signin .link { color: #8A94B0; font-size: 13px; text-align: center; text-decoration: none; }
 
-/* === RESPONSIVE MOBILE BREAKPOINT === */
+/* === MOBILE BREAKPOINT === */
 @media (max-width: 640px) {
   .editor-bar { padding: 10px 14px; }
   .editor-actions { width: 100%; }
@@ -221,45 +217,59 @@
   .form .inline { grid-template-columns: 1fr; }
   .toaster { top: 10px; right: 10px; left: 10px; max-width: none; }
   
-  /* Mobile Stack for Row Cards (Contact, Social, Projects, etc.) */
+  /* Mobile Flex-Wrap layout for Row Cards */
   .row-card {
-    grid-template-columns: 1fr auto;
-    grid-template-areas: 
-      "handle delete"
-      "fields fields";
-    gap: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px;
   }
   .row-handle {
-    grid-area: handle;
     flex-direction: row;
     width: auto;
+    order: 1;
   }
   .row-fields {
-    grid-area: fields;
+    width: 100%;
+    order: 3;
   }
   .row-card > .danger {
-    grid-area: delete;
-    align-self: center;
+    order: 2;
+    width: auto;
+    height: 38px;
+    margin-top: 0;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
   }
 
-  /* Mobile Stack for Section Manager */
+  /* Mobile Flex-Wrap layout for Section Manager */
   .section-manager-card {
-    grid-template-columns: 1fr auto;
-    grid-template-areas: 
-      "reorder delete"
-      "content content";
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
     gap: 12px;
+    padding: 16px;
   }
   .section-manager-reorder {
-    grid-area: reorder;
     flex-direction: row;
     width: auto;
-  }
-  .section-manager-content {
-    grid-area: content;
+    order: 1;
   }
   .section-manager-actions {
-    grid-area: delete;
-    align-self: center;
+    order: 2;
+    width: auto;
+  }
+  .section-manager-delete {
+    height: 38px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+  }
+  .section-manager-content {
+    width: 100%;
+    order: 3;
+    margin-top: 4px;
   }
 }
