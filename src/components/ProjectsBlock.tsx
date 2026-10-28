@@ -34,15 +34,15 @@ export function ProjectsBlock({ items, path, editing, filter, showFilter, usedSk
 
   return (
     <>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-        {showFilter && !editing ? (
-          <div className="fbar" role="group" aria-label="Filter projects" style={{ margin: 0 }}>
+      <div style={{ marginBottom: 14 }}>
+        {showFilter && !editing && (
+          <div className="fbar" role="group" aria-label="Filter projects" style={{ marginBottom: 8 }}>
             <button type="button" aria-pressed={!activeFilter} onClick={() => onFilter('')}>All</button>
             {usedSkills.map((k) => <button key={k} type="button" aria-pressed={activeFilter === k} onClick={() => onFilter(k)}>{k}</button>)}
           </div>
-        ) : <div />}
+        )}
         {!editing && (
-          <span className="hint" style={{ margin: 0, fontSize: 12 }}>Select a card to view full details.</span>
+          <span className="hint" style={{ display: 'block', fontSize: 12 }}>click on a project to expand</span>
         )}
       </div>
 
