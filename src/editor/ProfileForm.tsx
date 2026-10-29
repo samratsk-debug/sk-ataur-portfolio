@@ -3,7 +3,7 @@ import { ProfilePhotoEditor } from '../ProfilePhotoEditor';
 import { normalizeExternalUrl } from '../../utils/url';
 
 export function ProfileForm() {
-  // EXTRACT uploadAsset AT THE TOP LEVEL
+  // uploadAsset is extracted safely at the top level here
   const { draft, setDraft, toast, uploadAsset } = useEditor();
   const p = draft.profile;
 
@@ -18,7 +18,7 @@ export function ProfileForm() {
     if (file.size > 10 * 1024 * 1024) { toast('PDF is larger than 10 MB.', 'err'); return; }
 
     try {
-      // USE THE EXTRACTED FUNCTION HERE (not useEditor())
+      // use uploadAsset directly, not useEditor()
       const asset = await uploadAsset(file, 'public');
       setDraft(d => ({
         ...d,
