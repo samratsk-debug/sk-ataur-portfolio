@@ -46,7 +46,7 @@ export class SupabaseRepository implements PortfolioRepository {
         autoRefreshToken: true, 
         detectSessionInUrl: true, 
         storageKey: 'sk-portfolio-auth',
-        storage: window.sessionStorage // THIS FIXES THE SESSION EXPIRY
+        storage: window.sessionStorage // Session expires when browser closes
       },
     });
   }
@@ -154,8 +154,12 @@ export class SupabaseRepository implements PortfolioRepository {
   async uploadAsset(file: File, scope: AssetScope): Promise<AssetRef> {
     const { data: { user } } = await this.supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated.');
-    if (!file.type.startsWith('image/')) throw new Error('File must be an image.');
-    if (file.size > 4 * 1024 * 1024) throw new Error('Image is larger than 4 MB.');
+    
+    // ALLOW PDFs for the resume upload
+    const isPdf = file.type === 'application/pdf';
+    if (!isPdf && !file.type.startsWith('image/')) throw new Error('File must be an image or PDF.');
+    if (file.size > 10 * 1024 * 1024) throw new Error('File is larger than 10 MB.');
+
     const ext = (file.name.split('.').pop() ?? 'bin').toLowerCase().replace(/[^a-z0-9]/g, '');
     const path = `${scope}/${user.id}/${crypto.randomUUID()}.${ext}`;
     const { error: upErr } = await this.supabase.storage.from(BUCKET).upload(path, file, { contentType: file.type, upsert: false });

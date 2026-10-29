@@ -3,7 +3,8 @@ import { ProfilePhotoEditor } from '../ProfilePhotoEditor';
 import { normalizeExternalUrl } from '../../utils/url';
 
 export function ProfileForm() {
-  const { draft, setDraft, toast } = useEditor();
+  const editor = useEditor();
+  const { draft, setDraft, toast } = editor;
   const p = draft.profile;
 
   const set = <K extends keyof typeof p>(key: K, val: (typeof p)[K]) =>
@@ -17,7 +18,7 @@ export function ProfileForm() {
     if (file.size > 10 * 1024 * 1024) { toast('PDF is larger than 10 MB.', 'err'); return; }
 
     try {
-      const asset = await useEditor().uploadAsset(file, 'public');
+      const asset = await editor.uploadAsset(file, 'public');
       setDraft(d => ({
         ...d,
         resume: {
@@ -39,7 +40,6 @@ export function ProfileForm() {
       <h2>Personal Details</h2>
       
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16, width: '100%', maxWidth: 600 }}>
-        {/* ADDED KICKER INPUT */}
         <label>Header Subtitle / Kicker
           <input value={p.kicker || ''} onChange={(e) => set('kicker', e.target.value)} placeholder="e.g. CURRICULUM VITAE" />
         </label>
@@ -52,7 +52,6 @@ export function ProfileForm() {
       <h3 style={{ marginTop: 32 }}>Profile Photo</h3>
       <ProfilePhotoEditor />
 
-      {/* ... Rest of the file remains exactly the same ... */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 32 }}>
         <h3 style={{ margin: 0 }}>Social Profiles</h3>
         <button type="button" className="primary" onClick={() => set('socialLinks', [...p.socialLinks, { id: 'social-' + Date.now(), label: 'New Link', url: '' }])}>+ Add Link</button>
