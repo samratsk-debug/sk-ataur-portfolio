@@ -38,8 +38,12 @@ export function ProfileForm() {
     <form className="form" onSubmit={(e) => e.preventDefault()}>
       <h2>Personal Details</h2>
       
-      {/* Removed the .row-card wrapper to allow full-width inputs */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16, width: '100%', maxWidth: 600 }}>
+        {/* ADDED KICKER INPUT */}
+        <label>Header Subtitle / Kicker
+          <input value={p.kicker || ''} onChange={(e) => set('kicker', e.target.value)} placeholder="e.g. CURRICULUM VITAE" />
+        </label>
+        
         <label>Name<input value={p.name} onChange={(e) => set('name', e.target.value)} /></label>
         <label>Professional title<input value={p.role} onChange={(e) => set('role', e.target.value)} /></label>
         <label>About<textarea rows={6} value={p.about} onChange={(e) => set('about', e.target.value)} /></label>
@@ -48,6 +52,7 @@ export function ProfileForm() {
       <h3 style={{ marginTop: 32 }}>Profile Photo</h3>
       <ProfilePhotoEditor />
 
+      {/* ... Rest of the file remains exactly the same ... */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 32 }}>
         <h3 style={{ margin: 0 }}>Social Profiles</h3>
         <button type="button" className="primary" onClick={() => set('socialLinks', [...p.socialLinks, { id: 'social-' + Date.now(), label: 'New Link', url: '' }])}>+ Add Link</button>

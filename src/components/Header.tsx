@@ -7,7 +7,6 @@ export function Header({
 }: { 
   profile: Profile; editable: boolean; onUploadPhoto: (f: File) => void; onRemovePhoto: () => void; onOpenLogin: () => void;
 }) {
-  // Find the first entry of each primary type to display in the header
   const primaryEmail = profile.contacts?.find(c => c.type === 'email')?.value;
   const primaryPhone = profile.contacts?.find(c => c.type === 'phone')?.value;
   const primaryAddress = profile.contacts?.find(c => c.type === 'address')?.value;
@@ -23,7 +22,8 @@ export function Header({
         onOpenLogin={onOpenLogin}
       />
       <div className="head-text">
-        <div className="kick">CURRICULUM VITAE</div>
+        {/* DYNAMIC KICKER HERE */}
+        <div className="kick">{profile.kicker || 'CURRICULUM VITAE'}</div>
         <h1 className="name">{profile.name}</h1>
         <p className="role">{profile.role}</p>
         <p className="ct">{[primaryEmail, primaryPhone, primaryAddress].filter(Boolean).join(' · ')}</p>

@@ -26,6 +26,7 @@ export interface Profile {
   name: string;
   role: string;
   about: string;
+  kicker: string;
   contacts: ContactEntry[];
   socialLinks: SocialLink[];
   photo: AssetRef | null;

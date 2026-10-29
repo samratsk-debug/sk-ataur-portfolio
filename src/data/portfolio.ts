@@ -10,6 +10,7 @@ export const portfolioData: PortfolioData = {
   profile: {
     name: 'SK ATAUR RAHAMAN',
     role: 'Full Stack Developer',
+    kicker: 'CURRICULUM VITAE',
     about: 'Computer Science undergraduate at SRM University–AP with a foundation in C, C++, Java, and web technologies. Building practical skills through coursework and personal projects, with an interest in software development and cloud computing.\nAlongside code, I work with videography, photography, graphic design and editing.',
     contacts: [
       { id: 'c-email', label: 'Email', type: 'email', value: 'samratskk69@gmail.com' },

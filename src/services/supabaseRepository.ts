@@ -41,7 +41,13 @@ export class SupabaseRepository implements PortfolioRepository {
 
   constructor(url: string, anonKey: string) {
     this.supabase = createClient(url, anonKey, {
-      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, storageKey: 'sk-portfolio-auth' },
+      auth: { 
+        persistSession: true, 
+        autoRefreshToken: true, 
+        detectSessionInUrl: true, 
+        storageKey: 'sk-portfolio-auth',
+        storage: window.sessionStorage // THIS FIXES THE SESSION EXPIRY
+      },
     });
   }
 
@@ -77,7 +83,6 @@ export class SupabaseRepository implements PortfolioRepository {
   }
 
   async resetPasswordForEmail(email: string): Promise<void> {
-    // Redirect back to the admin route where we will detect the PASSWORD_RECOVERY event
     const redirectTo = `${window.location.origin}/#/admin`;
     const { error } = await this.supabase.auth.resetPasswordForEmail(email, { redirectTo });
     if (error) throw new Error(error.message);

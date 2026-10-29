@@ -63,6 +63,7 @@ export function migrateData(data: PortfolioData): PortfolioData {
     version: 6,
     profile: {
       ...data.profile,
+       kicker: data.profile.kicker || 'CURRICULUM VITAE',
       socialLinks: data.profile.socialLinks || migratedSocialLinks,
       contacts: migratedContacts,
       email: undefined,

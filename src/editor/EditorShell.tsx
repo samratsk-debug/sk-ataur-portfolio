@@ -26,7 +26,7 @@ type TabId = (typeof TABS)[number]['id'];
 
 const EMPTY: PortfolioData = {
   version: 6, updatedAt: '', publishedAt: null,
-  profile: { name: '', role: '', about: '', contacts: [], socialLinks: [], photo: null },
+  profile: { name: '', role: '', about: '', kicker: '', contacts: [], socialLinks: [], photo: null },
   resume: null, sectionOrder: ['about', 'skills', 'projects', 'creative', 'education', 'contact'], customSections: [],
   skills: [], projects: [], creative: [], education: [],
 };
@@ -48,7 +48,16 @@ class TabErrorBoundary extends Component<{ children: ReactNode }, { hasError: bo
 
 export function EditorShell({ session }: { session: SessionApi }) {
   const initial = session.draft ?? session.published ?? EMPTY;
-  const [draft, setDraft] = useState<PortfolioData>(() => structuredClone(initial));
+  
+  // Load from local backup if it exists
+  const [draft, setDraft] = useState<PortfolioData>(() => {
+    const backup = localStorage.getItem('sk-unsaved-draft');
+    if (backup) {
+      try { return JSON.parse(backup); } catch {}
+    }
+    return structuredClone(initial);
+  });
+
   const [saved, setSaved] = useState<PortfolioData>(() => structuredClone(initial));
   const [tab, setTab] = useState<TabId>('profile');
   const [busy, setBusy] = useState<string | null>(null);
@@ -59,6 +68,15 @@ export function EditorShell({ session }: { session: SessionApi }) {
   
   const dirty = useMemo(() => JSON.stringify(draft) !== JSON.stringify(saved), [draft, saved]);
   useUnsavedChanges(dirty);
+
+  // Save backup to local storage on every change
+  useEffect(() => {
+    if (dirty) {
+      localStorage.setItem('sk-unsaved-draft', JSON.stringify(draft));
+    } else {
+      localStorage.removeItem('sk-unsaved-draft');
+    }
+  }, [draft, dirty]);
 
   useEffect(() => {
     if (session.draft && !dirty) {
@@ -78,6 +96,7 @@ export function EditorShell({ session }: { session: SessionApi }) {
       const savedData = structuredClone(s);
       setSaved(savedData);
       setDraft(prev => JSON.stringify(prev) === JSON.stringify(snapshot) ? savedData : prev);
+      localStorage.removeItem('sk-unsaved-draft'); // Clear backup on save
       toasts.push('Draft saved', 'ok');
       return true;
     } catch (e) {
@@ -96,6 +115,7 @@ export function EditorShell({ session }: { session: SessionApi }) {
         if (!success) return;
       } else {
         setDraft(structuredClone(saved));
+        localStorage.removeItem('sk-unsaved-draft');
       }
     }
     window.location.hash = '#/preview';
@@ -114,6 +134,7 @@ export function EditorShell({ session }: { session: SessionApi }) {
       const pub = structuredClone(p);
       setSaved(pub);
       setDraft(pub);
+      localStorage.removeItem('sk-unsaved-draft'); // Clear backup on publish
       toasts.push('Published successfully', 'ok');
     } catch (e) {
       toasts.push(e instanceof Error ? e.message : 'Publish failed', 'err');
@@ -126,6 +147,7 @@ export function EditorShell({ session }: { session: SessionApi }) {
     if (!dirty) return;
     if (!confirm('Discard all unsaved changes?')) return;
     setDraft(structuredClone(saved));
+    localStorage.removeItem('sk-unsaved-draft'); // Clear backup on discard
     toasts.push('Changes discarded', 'ok');
   };
 
@@ -137,6 +159,7 @@ export function EditorShell({ session }: { session: SessionApi }) {
       const draftData = structuredClone(d);
       setDraft(draftData);
       setSaved(draftData);
+      localStorage.removeItem('sk-unsaved-draft');
       toasts.push('Draft reverted to published', 'ok');
     } catch (e) {
       toasts.push(e instanceof Error ? e.message : 'Discard failed', 'err');
