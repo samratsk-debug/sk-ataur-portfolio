@@ -3,8 +3,9 @@ import { ProfilePhotoEditor } from '../ProfilePhotoEditor';
 import { normalizeExternalUrl } from '../../utils/url';
 
 export function ProfileForm() {
-  // 1. uploadAsset is extracted safely at the top level
-  const { draft, setDraft, toast, uploadAsset } = useEditor();
+  // Access the whole object instead of destructuring uploadAsset
+  const editor = useEditor();
+  const { draft, setDraft, toast } = editor;
   const p = draft.profile;
 
   const set = <K extends keyof typeof p>(key: K, val: (typeof p)[K]) =>
@@ -18,8 +19,8 @@ export function ProfileForm() {
     if (file.size > 10 * 1024 * 1024) { toast('PDF is larger than 10 MB.', 'err'); return; }
 
     try {
-      // 2. Call uploadAsset directly (DO NOT USE useEditor() here!)
-      const asset = await uploadAsset(file, 'public');
+      // Call it directly from the editor object
+      const asset = await editor.uploadAsset(file, 'public');
       setDraft(d => ({
         ...d,
         resume: {
