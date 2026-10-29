@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import type { AssetRef } from '../types';
 import { useEditor } from './EditorContext';
+import { ImageCropper } from './ImageCropper';
 
 const ACCEPT = 'image/jpeg,image/png,image/webp,image/gif,image/avif';
 
@@ -15,21 +16,27 @@ export function AssetUploader({ value, onChange, label = 'Image', aspect }: Prop
   const { uploadAsset, deleteAsset, toast } = useEditor();
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [imageToCrop, setImageToCrop] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleFile = async (file: File) => {
-    if (!file.type.startsWith('image/')) {
-      toast('File must be an image.', 'err');
-      return;
-    }
-    if (file.size > 4 * 1024 * 1024) {
-      toast('Image is larger than 4 MB.', 'err');
-      return;
-    }
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    if (!file.type.startsWith('image/')) { toast('Must be an image.', 'err'); return; }
+    if (file.size > 4 * 1024 * 1024) { toast('Image > 4MB.', 'err'); return; }
     
+    // Open the cropper instead of uploading immediately
+    const url = URL.createObjectURL(file);
+    setImageToCrop(url);
+  };
+
+  const handleCropComplete = async (blob: Blob) => {
+    setImageToCrop(null);
     setBusy(true);
     setProgress(30);
     try {
+      const file = new File([blob], 'upload.jpg', { type: 'image/jpeg' });
       const asset = await uploadAsset(file, 'draft');
       onChange(asset);
       setProgress(100);
@@ -44,10 +51,7 @@ export function AssetUploader({ value, onChange, label = 'Image', aspect }: Prop
   };
 
   const remove = async () => {
-    if (!value) return;
-    if (!confirm(`Remove ${label.toLowerCase()}?`)) return;
-    
-    // Drop the reference first so a failed storage delete never blocks the user.
+    if (!value || !confirm(`Remove ${label.toLowerCase()}?`)) return;
     const oldPath = value.path;
     onChange(null);
     try { await deleteAsset(oldPath); } catch { /* logged by repository */ }
@@ -66,27 +70,26 @@ export function AssetUploader({ value, onChange, label = 'Image', aspect }: Prop
         <button type="button" onClick={() => inputRef.current?.click()} disabled={busy}>
           {value ? 'Replace' : 'Upload'}
         </button>
-        {value && (
-          <button type="button" onClick={remove} disabled={busy}>
-            Remove
-          </button>
-        )}
+        {value && <button type="button" onClick={remove} disabled={busy}>Remove</button>}
         <input
           ref={inputRef}
           type="file"
           accept={ACCEPT}
           hidden
-          onChange={(e) => {
-            const f = e.target.files?.[0];
-            e.target.value = '';
-            if (f) void handleFile(f);
-          }}
+          onChange={handleFileSelect}
         />
       </div>
-      {progress > 0 && (
-        <div className="uploader-bar">
-          <span style={{ width: `${progress}%` }} />
-        </div>
+      {progress > 0 && <div className="uploader-bar"><span style={{ width: `${progress}%` }} /></div>}
+
+      {/* Render the cropper modal if an image is selected */}
+      {imageToCrop && (
+        <ImageCropper 
+          image={imageToCrop} 
+          aspect={aspect || 1}
+          cropShape={aspect && aspect !== 1 ? 'rect' : 'round'} 
+          onCancel={() => setImageToCrop(null)} 
+          onCropComplete={handleCropComplete} 
+        />
       )}
     </div>
   );

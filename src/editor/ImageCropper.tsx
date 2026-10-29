@@ -1,15 +1,17 @@
 import { useState, useCallback } from 'react';
 import Cropper from 'react-easy-crop';
-import 'react-easy-crop/react-easy-crop.css'; // REQUIRED FOR CROPPER TO WORK PROPERLY
+import 'react-easy-crop/react-easy-crop.css';
 import { getCroppedImg } from '../utils/cropImage';
 
 interface ImageCropperProps {
   image: string;
   onCancel: () => void;
   onCropComplete: (blob: Blob) => void;
+  aspect?: number;
+  cropShape?: 'rect' | 'round';
 }
 
-export function ImageCropper({ image, onCancel, onCropComplete }: ImageCropperProps) {
+export function ImageCropper({ image, onCancel, onCropComplete, aspect = 1, cropShape = 'round' }: ImageCropperProps) {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [rotation, setRotation] = useState(0);
@@ -47,8 +49,8 @@ export function ImageCropper({ image, onCancel, onCropComplete }: ImageCropperPr
 
   return (
     <div className="modal-backdrop" style={{ zIndex: 9999 }}>
-      <div className="modal-content glass-panel" style={{ width: 'min(600px, 100%)', padding: 24, maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
-        <h2 style={{ margin: '0 0 16px', color: '#fff' }}>Crop Profile Photo</h2>
+      <div className="modal-content glass-panel" style={{ width: 'min(700px, 100%)', padding: 24, maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
+        <h2 style={{ margin: '0 0 16px', color: '#fff' }}>Crop Image</h2>
         
         <div style={{ position: 'relative', flex: 1, minHeight: 300, background: '#000', borderRadius: 12, overflow: 'hidden', marginBottom: 20 }}>
           <Cropper
@@ -56,8 +58,8 @@ export function ImageCropper({ image, onCancel, onCropComplete }: ImageCropperPr
             crop={crop}
             zoom={zoom}
             rotation={rotation}
-            aspect={1}
-            cropShape="round"
+            aspect={aspect}
+            cropShape={cropShape}
             showGrid={false}
             onCropChange={onCropChange}
             onCropComplete={onCropCompleteInternal}
