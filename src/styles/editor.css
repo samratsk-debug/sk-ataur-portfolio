@@ -48,7 +48,27 @@
 .form fieldset { border: 1px solid rgba(255,255,255,.1); border-radius: 8px; padding: 10px 14px; }
 .form legend { padding: 0 6px; font: 600 12px Inter; color: #8A94B0; text-transform: uppercase; letter-spacing: .08em; }
 .form .inline { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.form .check { flex-direction: row; align-items: center; gap: 8px; padding: 4px 0; }
+
+/* FIXED CHECKBOX ALIGNMENT */
+.form .check { 
+  display: flex; 
+  flex-direction: row; 
+  align-items: flex-start; 
+  gap: 10px; 
+  padding: 6px 0; 
+  cursor: pointer;
+  color: #E8ECF6;
+}
+.form .check input[type="checkbox"] {
+  margin-top: 3px; /* Align with the first line of text */
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  accent-color: #7C9CFF; /* Make the checkbox blue to match theme */
+}
+.form .check span {
+  line-height: 1.4;
+}
 
 .form button { padding: 9px 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,.2); background: transparent; color: #E8ECF6; font: 500 13px Inter; cursor: pointer; }
 .form button.primary { background: #7C9CFF; border-color: #7C9CFF; color: #0A0F1F; align-self: flex-start; }

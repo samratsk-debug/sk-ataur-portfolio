@@ -81,11 +81,12 @@ export function ProjectsForm() {
                   <span>Skills Used</span>
                   <button type="button" className="primary" style={{ padding: '2px 8px', fontSize: 11 }} onClick={createSkill}>+ New</button>
                 </legend>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 8 }}>
+                {/* Changed grid to auto-fill for better responsiveness */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '8px 16px', marginTop: 12 }}>
                   {draft.skills.map((s) => (
                     <label key={s.id} className="check">
                       <input type="checkbox" checked={(p.skillIds || []).includes(s.id)} onChange={() => toggleSkill(p.id, s.id)} />
-                      {s.name}
+                      <span>{s.name}</span>
                     </label>
                   ))}
                 </div>
